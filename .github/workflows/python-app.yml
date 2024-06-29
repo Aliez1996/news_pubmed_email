@@ -1,0 +1,32 @@
+name: Run Python Script
+
+on:
+  schedule:
+    # 每隔三天在北京时间早上6点运行
+    - cron: '0 22 */3 * *'
+  workflow_dispatch:
+
+jobs:
+  run_script:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests beautifulsoup4
+
+    - name: Run script
+      run: python news_pubmed_email.py
+
+    - name: Send email
+      run: |
+        echo "Subject: News PubMed Update\n\nThe script has been executed." | sendmail -v 15638800229fyg@gmail.com
